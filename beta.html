@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <title>Security Key Redirect</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Insert Your Security Key</h1>
+        <button id="authenticateBtn">Authenticate</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const authenticateBtn = document.getElementById("authenticateBtn");
+
+            authenticateBtn.addEventListener("click", async function() {
+                try {
+                    const allowedCredential = {
+                        id: Uint8Array.from(/* insert your registered security key's id here */),
+                        type: 'public-key'
+                    };
+
+                    const publicKey = await navigator.credentials.get({
+                        publicKey: {
+                            challenge: new Uint8Array([/* generate a random challenge */]),
+                            allowCredentials: [allowedCredential],
+                            timeout: 60000
+                        }
+                    });
+
+                    // Assuming successful authentication
+                    if (publicKey) {
+                        // Redirect to the desired URL
+                        redirectToSecurePage();
+                    }
+                } catch (error) {
+                    console.error("Authentication error:", error);
+                }
+            });
+
+            function redirectToSecurePage() {
+                window.location.href = "https://www.example.com/secure-page";
+            }
+        });
+    </script>
+</body>
+</html>
